@@ -239,6 +239,8 @@ vercel --prod
 cd backend
 # Инструкции по деплою backend
 ```
+ССЫЛКА НА СКРИНКАСТ https://disk.yandex.ru/i/KQ4STtVCEXriww
+
 
 ## 🤝 Команда
 

@@ -234,11 +234,7 @@ cd generator
 vercel --prod
 ```
 
-### Backend
-```bash
-cd backend
-# Инструкции по деплою backend
-```
+
 ССЫЛКА НА СКРИНКАСТ https://disk.yandex.ru/i/KQ4STtVCEXriww
 
 
@@ -254,6 +250,6 @@ cd backend
 - [Backend Documentation](backend/README.md)
 - [Swagger API Documentation](http://26.237.158.25:8000/docs)
 - [NIST Statistical Test Suite](https://csrc.nist.gov/projects/random-bit-generation)
-
+ССЫЛКА НА СКРИНКАСТ https://disk.yandex.ru/i/KQ4STtVCEXriww
 
 **RandAqua** - где морская жизнь встречается с криптографией! 🐟✨

@@ -30,11 +30,71 @@
 - **Tailwind CSS 4.0** - Utility-first CSS фреймворк
 - **JavaScript ES6+** - Современный JavaScript
 
-### ⚙️ Backend (`/backend`)
-- **API Endpoint**: `http://26.237.158.25:8000`
-- **Swagger Documentation**: Полная документация API
-- **Алгоритмы генерации**: Собственные методы обработки энтропии
-- **Статистические тесты**: NIST STS, Dieharder, TestU01
+## ⚙️ Backend
+
+- Язык/Стек: FastAPI (Python), .NET 8 (C#), Postgres, MSSQL, Redis, RabbitMQ
+- Запуск: один файл `docker-compose.yml` поднимает весь бэкенд-стек
+
+### Быстрый старт (Docker)
+```bash
+# из корня репозитория
+docker compose build
+docker compose up -d
+```
+
+- API (main-service): http://localhost:8000/docs
+- Authorization (.NET): http://localhost:7177/swagger
+- Generation (.NET): http://localhost:7134/swagger
+- Analysis (.NET): http://localhost:7182/swagger
+- MailHog (почта dev): http://localhost:8025
+
+### Сервисы
+- main-service (FastAPI, порт 8000 наружу, 8001 внутри): оркеструет вызовы, анализ видео (YOLO/OpenCV), прокси к C# сервисам
+- authorization (.NET, 7177): регистрация, логин, подтверждение e‑mail
+- generation (.NET, 7134): генерация чисел/слепков; пишет файлы на file-server
+- analysis (.NET, 7182): статистические тесты случайности (NIST и пр.)
+- file-server (внутренний 8002): хранилище файлов/истории
+- Инфра: Postgres (main/file), MSSQL (authorization), Redis (rate-limit/cache), RabbitMQ, MailHog (SMTP dev)
+
+### Эндпоинты (основные)
+main-service (http://localhost:8000):
+- POST `/auth/register` — регистрация (прокси в authorization)
+- POST `/auth/login` — вход (прокси)
+- POST `/auth/verify-code` — подтверждение кода (прокси)
+- POST `/video/generate-batch-snapshot` — анализ 10с видео и вызов генерации
+- POST `/video/generate-binary-seeds` — 6 сидов из случайных сегментов видео
+- Swagger: `/docs`
+
+authorization (http://localhost:7177):
+- POST `/api/auth/register`, `/api/auth/login`, `/api/Auth/confirm-email`, `/api/Auth/get-user-info`
+
+generation (http://localhost:7134):
+- POST `/api/RandomGenerator/generate/batch/snapshot`
+- POST `/api/RandomGenerator/generate/binary-seeds`
+
+analysis (http://localhost:7182):
+- Swagger с тестами случайности
+
+### Видео и модели
+- Входное видео: `mainservise/video_storage/current_video.mp4` → монтируется как `/app/video_storage/current_video.mp4`
+- YOLO-модель: `mainservise/neiro/best.pt` → копируется в образ (`/app/neiro/best.pt`)
+
+### Почта
+- По умолчанию письма идут в MailHog (dev). UI: http://localhost:8025
+- Для боевого SMTP задайте в `docker-compose.yml` для `authorization`:
+  - `EmailSettings__SmtpHost`, `EmailSettings__SmtpPort`, `EmailSettings__SmtpUsername`, `EmailSettings__SmtpPassword`, `EmailSettings__FromEmail`, `EmailSettings__EnableSsl=true`
+  - затем: `docker compose up -d authorization`
+
+### Полезные команды
+```bash
+# логи сервиса
+docker compose logs -f main-service
+# пересобрать и перезапустить один сервис
+docker compose build authorization && docker compose up -d authorization
+# остановить всё
+docker compose down
+```
+
 
 ## 🚀 Быстрый старт
 

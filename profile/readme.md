@@ -106,10 +106,75 @@ npm run dev
 ```
 Откройте [http://localhost:3000](http://localhost:3000)
 
-### Backend
+### Backend (Docker Compose)
+
+Требования:
+- Linux VPS (Ubuntu 22.04+), 2+ CPU, 6–8 GB RAM (из-за ML пакетов), 20+ GB диска
+- Открытые порты: 8000 (main), 7177 (auth), 7134 (generation), 7182 (analysis) или настрой reverse proxy
+- SMTP-учётка (если отправка писем должна идти «в мир»)
+
+Установка Docker:
 ```bash
-cd backend
-# Инструкции по запуску backend команды
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+Деплой:
+```bash
+# забрать код
+git clone <your-repo-url> && cd <repo-name>
+
+# при необходимости – пропишите реальные SMTP в docker-compose.yml (authorization)
+# EmailSettings__SmtpHost, EmailSettings__SmtpPort, EmailSettings__SmtpUsername, EmailSettings__SmtpPassword,
+# EmailSettings__FromEmail, EmailSettings__EnableSsl=true
+
+# сборка и запуск
+docker compose build
+docker compose up -d
+```
+
+Проверка:
+- main-service: http://<SERVER_IP>:8000/docs
+- authorization: http://<SERVER_IP>:7177/swagger
+- generation: http://<SERVER_IP>:7134/swagger
+- analysis: http://<SERVER_IP>:7182/swagger
+
+Обновление релиза:
+```bash
+git pull
+docker compose build
+docker compose up -d
+```
+
+Логи и отладка:
+```bash
+docker compose ps
+docker compose logs -f main-service
+docker compose logs -f authorization
+```
+
+Persist-ключи .NET DataProtection (рекомендовано):
+- Добавьте volume к `authorization`:
+```yaml
+authorization:
+  # ...
+  volumes:
+    - auth_keys:/root/.aspnet/DataProtection-Keys
+# и в конце файла:
+volumes:
+  auth_keys:
+```
+
+Опционально: Reverse Proxy (Nginx)
+- Проксируйте домен(ы) на внутренние порты сервисов и подключите TLS (certbot).
+```nginx
+server {
+  server_name api.example.com;
+  location / { proxy_pass http://127.0.0.1:8000; }
+}
+```
+Перезапуск Nginx: `sudo systemctl reload nginx`трукции по запуску backend команды
 ```
 
 ## 🎮 Сценарии использования

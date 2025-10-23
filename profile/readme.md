@@ -191,10 +191,6 @@ cd backend
 - **Backend**: API разработка, алгоритмы генерации случайности
 - **DevOps**: Инфраструктура, мониторинг
 
-## 📄 Лицензия
-
-Этот проект лицензирован под MIT License - см. файл [LICENSE](LICENSE) для деталей.
-
 ## 🔗 Полезные ссылки
 
 - [Frontend Documentation](generator/README.md)
@@ -202,12 +198,5 @@ cd backend
 - [Swagger API Documentation](http://26.237.158.25:8000/docs)
 - [NIST Statistical Test Suite](https://csrc.nist.gov/projects/random-bit-generation)
 
-## 📞 Контакты
-
-- **GitHub**: [@your-organization](https://github.com/your-organization)
-- **Email**: your-email@example.com
-- **Telegram**: @your-telegram
-
----
 
 **RandAqua** - где морская жизнь встречается с криптографией! 🐟✨
